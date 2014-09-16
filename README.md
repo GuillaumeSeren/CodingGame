@@ -1,4 +1,6 @@
 CodingGame
 ==========
 
-My solution from the CodingGame contest.
+My solution from the CodingGame (www.codingame.com) contest.
+
+
