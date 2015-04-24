@@ -1,43 +1,41 @@
 #!/bin/bash
 # -*- coding: UTF8 -*-
 
- # The code below will read all the game information for you.
-# On each game turn, information will be available on the standard input, you will be sent:
-# -> the total number of visible enemies
-# -> for each enemy, its name and distance from you
-# The system will wait for you to write an enemy name on the standard output.
-# Once you have designated a target:
-# -> the cannon will shoot
-# -> the enemies will move
-# -> new info will be available for you to read on the standard input.
+# CodinGame planet is being attacked by slimy insectoid aliens.
 
+function addThreat() {
+    threat["$2"]="$1"
+    echo "Add Enemy1{$enemy1, $dist1}" >&2
+}
+
+function getNearestThreat() {
+    local key=$(echo -e "${!threat[@]}" | sed 's/[[:space:]]/\n/g' | sort -n | head -1)
+    echo "$key"
+}
 
 # game loop
 while true; do
-    # declare array
+    # enemy1: name of enemy 1
+    read enemy1
+    # dist1: distance to enemy 1
+    read dist1
+    # enemy2: name of enemy 2
+    read enemy2
+    # dist2: distance to enemy 2
+    read dist2
+
+    # Declare map of threat
     declare -A threat
-    # count: The number of current enemy ships within range
-    read count
-    echo -e "threat number: "$count'\n' >&2
-    for (( i=0; i<count; i++ )); do
-        # enemy: The name of this enemy
-        # dist: The distance to your cannon of this enemy
-        read enemy dist
-        #echo "--> {dist:\""$dist"\"nom:\""$enemy"\"}"
-        threat[$dist]=$enemy
-    done
-    # we need to get the nearest enemy
-    # Sort the key
-    key=$(echo -e "${!threat[@]}" | sed 's/[[:space:]]/\n/g' | sort)
-    echo -e "Mapping: "$key'\n' >&2
-    # Get the first
-    target=$(echo -e ${key} | sed 's/\([0-9]+*\)[[:space:]].*/\1/')
-    echo -e "Nearest: "$target'\n' >&2
-    # To debug: echo "Debug messages..." >&2
-    focus="${threat[$target]}"
-    echo -e "focus: "${focus}'\n' >&2
-    echo "${focus}" # The name of the most threatening enemy (HotDroid is just one example)
+    # echo "->Enemy1{name: $enemy1, dist: $dist1}" >&2
+    addThreat "$enemy1" "$dist1"
+    # echo "->Enemy2{name: $enemy2, dist: $dist2}" >&2
+    addThreat "$enemy2" "$dist2"
+    # Find the nearest one
+    key=$(getNearestThreat)
+    echo "nearest: $key" >&2
+
+    # echo "enemy" # replace with correct ship name
+    echo "${threat[$key]}"
     unset threat
     unset key
-    unset target
 done
